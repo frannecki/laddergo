@@ -1,0 +1,5 @@
+/backup
+*.log
+/server/*.go
+/server/*_wrap.cxx
+/laddergo
