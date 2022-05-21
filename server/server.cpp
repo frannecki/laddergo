@@ -1,10 +1,6 @@
 #include <functional>
 #include <string>
 
-#ifdef _MSC_VER
-#pragma comment(lib, "ws2_32.lib")
-#endif
-
 #include <ladder/Buffer.h>
 #include <ladder/Connection.h>
 #include <ladder/Logging.h>
@@ -14,21 +10,19 @@
 using namespace ladder;
 using namespace std::placeholders;
 
-void OnMessage(const ConnectionPtr& conn, Buffer* buffer) {
+void OnMessage(const ConnectionPtr& conn, Buffer* buffer, Handler* handler) {
   std::string message = buffer->ReadAll();
   LOG_INFO("Received: " + message);
-  conn->Send("Echoback~ " + message);
+  if (handler)
+  conn->Send(handler->OnRequest(message));
 }
 
-void OnConnection(const ConnectionPtr& conn) {
-  conn->Send("Hello -- This is a ladder server.");
-}
-
-Server::Server(unsigned short port) {
+Server::Server(unsigned short port)
+  : server_(nullptr), handler_(nullptr)
+{
+  Logger::create("test_server.log");
   SocketAddr addr("0.0.0.0", static_cast<uint16_t>(port), false);
   server_ = new TcpServer(addr, false);
-  server_->SetConnectionCallback(std::bind(OnConnection, _1));
-  server_->SetReadCallback(std::bind(OnMessage, _1, _2));
 }
 
 Server::~Server() {
@@ -38,3 +32,9 @@ Server::~Server() {
 void Server::Start() {
   server_->Start();
 }
+
+void Server::SetRequestCallback(Handler* handler) {
+  server_->SetReadCallback(std::bind(OnMessage, _1, _2, handler));
+}
+
+Handler::~Handler() {}

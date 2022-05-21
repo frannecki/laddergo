@@ -1,5 +1,8 @@
+.vscode/
 /backup
 *.log
 /server/*.go
-/server/*_wrap.cxx
+*_wrap.cxx
+*_wrap.h
+*_wrap.go
 /laddergo

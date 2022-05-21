@@ -1,4 +1,4 @@
-# Golang binding for ladder
+# Golang binding for ladder with swig
 ## Prerequisites
 * [Ladder](https://github.com/frannecki/ladder)
 

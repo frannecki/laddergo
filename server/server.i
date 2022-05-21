@@ -1,8 +1,13 @@
-%module server
+%module(directors="1") server
 
 %{
 #include "server.h"
 %}
 
-/* Let's just grab the original header file here */
+%include <typemaps.i>
+%include <cpointer.i>
+%include <std_string.i>
+
+%feature("director") Handler;
+
 %include "server.h"
